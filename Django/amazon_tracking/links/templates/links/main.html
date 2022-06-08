@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load colorize %}
+{% block content %}
+<!-- Modal -->
+<div class="modal fade" id="addItemModal" tabindex="-1"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">
+                    Add an item for tracking
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="POST" autocomplete="off">
+                    {% csrf_token %}
+                    {{form|crispy}}
+                    <button type="submit"
+                        class="btn btn-primary mt-2">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <button class="btn btn-primary" data-bs-toggle="modal"
+            data-bs-target="#addItemModal">
+            <i class="fas fa-plus"></i>
+        </button>
+        <a href="{% url 'update-prices' %}">
+            <button class="btn btn-secondary" type="button">
+                <i class="fas fa-repeat"></i>
+            </button>
+        </a>
+    </div>
+    <div class="col" style="text-align:right">
+        <div>Total number of items being tracked: {{items_no}}</div>
+        <div>Discounted items: {{no_discounted}}</div>
+    </div>
+</div>
+{% if qs %}
+{% for item in qs %}
+<div class="card mt-3">
+    <div class="card-header flex">
+        <h5 class=" me-auto mb-2 mb-lg-0">{{item.name}}
+            <a href="{% url 'delete' item.pk %}" class='text-danger mx-3'>
+
+                <i class="fas fa-trash-alt fa-1x"></i>
+
+            </a>
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="blockquote">
+            <div>
+                <strong>Current price :</strong> {{item.current_price}} ($)
+            </div>
+            <div><strong>Old price :</strong> {{item.old_price}} ($)</div>
+            <div><strong>Difference :</strong>
+                {{item.price_difference|colorize}} ($)</div>
+            <div><strong>Link:</strong> <a href="{{item.url}}">{{item.url}}</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<h3> No items being tracked ... </h3>
+{% endif %}
+{% endblock content %}
