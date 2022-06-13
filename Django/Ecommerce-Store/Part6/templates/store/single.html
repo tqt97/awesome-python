@@ -1,0 +1,112 @@
+{% extends "../base.html" %}
+{% load static %}
+{% block title %}
+{% if product %}{{ product.title }}{% else %}Product{% endif %}
+{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'store/css/store.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <main class="pt-2">
+    <div class="container">
+      <div class="row g-3">
+        <div class="col-md-5 ps-3 col-lg-5 order-md-last order-1">
+          <div class="d-grid gap-2">
+            <div class="title">
+              <h1 class="mb-0 h2 pe-4 pb-4">
+                {{ product.title }}
+              </h1>
+            </div>
+            <!-- <div class="d-flex d-flex-inline justify-content-between"> -->
+            <div>
+              <span class="h3">£{{ product.regular_price }}</span>
+              <p class="text-muted">includes tax</p>
+            </div>
+            <div class="">
+              <label for="select">Quantity:</label>
+              <select id="select" class="h6 store-select-dropdown">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <!-- </div> -->
+            <hr>
+            <div class="d-flex d-flex-inline justify-content-between">
+              <button type="button" id="add-button" value="{{product.id}}"
+                class="btn btn-success fw500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                  fill="currentColor" class="bi bi-cart-plus"
+                  viewBox="0 0 16 16">
+                  <path
+                    d="M9 5.5a.5.5 0 0 0-1 0V7H6.5a.5.5 0 0 0 0 1H8v1.5a.5.5 0 0 0 1 0V8h1.5a.5.5 0 0 0 0-1H9V5.5z" />
+                  <path
+                    d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                </svg>
+              </button>
+              <button type="button" id="add-button" value="{{product.id}}"
+                class="btn btn-danger fw500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                  fill="currentColor" class="bi bi-bag-heart"
+                  viewBox="0 0 16 16">
+                  <path fill-rule="evenodd"
+                    d="M10.5 3.5a2.5 2.5 0 0 0-5 0V4h5v-.5Zm1 0V4H15v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4h3.5v-.5a3.5 3.5 0 1 1 7 0ZM14 14V5H2v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1ZM8 7.993c1.664-1.711 5.825 1.283 0 5.132-5.825-3.85-1.664-6.843 0-5.132Z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-7 col-lg-7 p-0">
+          <div class="card mb-3 border-0">
+            <div class="row g-0">
+              <div class="col-md-12">
+                <div class="card-body p-1">
+                  <div class="bg-light">
+                    {% for image in product.product_image.all %}
+                    {% if image.is_feature %}
+                    <a href="{{ product.get_absolute_url }}">
+                      <img class="img-fluid" alt="{{ image.alt_text }}"
+                        src="{{ image.image.url }}">
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+  $(document).on('click', '#add-button', function (e) {
+    e.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: '{% url "basket:basket_add" %}',
+      data: {
+        productId: $('#add-button').val(),
+        productQty: $('#select option:selected').text(),
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        action: 'post'
+      },
+      success: function (json) {
+        document.getElementById('basket-qty')
+          .innerHTML = json.qty;
+      },
+      error: function (xhr, status, error) {
+        console.log(xhr.responseText);
+      }
+    });
+  });
+
+</script>
+{% endblock %}
