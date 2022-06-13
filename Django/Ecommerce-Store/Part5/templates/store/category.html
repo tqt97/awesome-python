@@ -1,0 +1,64 @@
+{% extends "../base.html" %}
+{% block title %}
+{% if category %}{{ category.name }}{% else %}Category{% endif %}
+{% endblock %}
+{% block content %}
+
+<div class="container">
+  <div class="col-12">
+    <h1 class="h2">{{ category.name|title }}</h1>
+  </div>
+  <div class="col-12 d-flex justify-content-between">
+    <div><b>Popular</b> products purchased</div>
+  </div>
+  <hr />
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="album py-5">
+      {% if not products %}
+      <div class="col-12">
+        <p>There are currently no products available</p>
+        <p>
+          <a href="{% url 'store:store_home' %}">Back to home page</a>
+        </p>
+      </div>
+      {% else %}
+      <div class="row row-cols-1 row-cols-sm-3 row-cols-md-4 g-3">
+        {% for product in products %}
+        <div class="col">
+          <div class="card border-0">
+            {% for image in product.product_image.all %}
+            {% if image.is_feature %}
+            <a href="{{ product.get_absolute_url }}">
+              <img class="img-fluid" alt="{{ image.alt_text }}"
+                src="{{ image.image.url }}">
+            </a>
+            {% endif %}
+            {% endfor %}
+            <div class="card-body px-0">
+              <p class="card-text">
+                <a class="text-dark text-decoration-none"
+                  href="{{ product.get_absolute_url }}">
+                  {{ product.title }}
+                </a>
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">£{{product.regular_price}}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+
+
+
+{% endblock %}
