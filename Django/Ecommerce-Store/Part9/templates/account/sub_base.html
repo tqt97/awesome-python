@@ -1,0 +1,13 @@
+{% extends "../base.html" %}
+{% load static %}
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'account/css/account.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="login d-flex align-items-center">
+        {% block sub_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}
